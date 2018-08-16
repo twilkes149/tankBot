@@ -18,3 +18,14 @@ The dashboard is build with bootstrapped html, with a simple image tag that stre
 
 ## Serial Communication
 Im using the serialport npm library to comunicate with the arduino
+
+## System
+The system comprises mainly two parts: a state machine running on the arduino, and a simple nodeJS server running on a raspberry Pi. The arduino listens for an incoming byte and performs the instructed action based on the received byte:
+
+  - 1. forward
+  - 2. reverse
+  - 3. left
+  - 4. right
+  - 5/default. stop
+
+The nodeJS server renders a simple html page on a get request, which includes a basic javascript script that emits commands through the use of sockets. The nodeJS server will receive those commands and send an appropriate byte to the arduino.

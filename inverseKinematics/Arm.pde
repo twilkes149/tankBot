@@ -16,11 +16,11 @@ class Arm {
   void drawArm() {    
     rect(400,0,50,50);//draw base
     
-    shoulder.show();
-    elbow.show();
-    
     shoulderA = shoulder.getAngle();
     elbow.setStart(shoulder.getEnd().x,shoulder.getEnd().y);
+    
+    shoulder.show();
+    elbow.show();
   }
   
   int getShoulderLen() {

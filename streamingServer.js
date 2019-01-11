@@ -15,6 +15,7 @@ var port = new SerialPort('/dev/ttyUSB0', {
   autoOpen: false,
 });
 
+//******************************************* serial port to arduino **********************************
 port.open((error) => {
   if (error) {
     console.log('error opening port', error.message);
@@ -26,14 +27,14 @@ port.open((error) => {
 
 app.use('/', express.static(path.join(__dirname, 'stream')));
  
- 
+//****************************************** default web page *****************************************
 app.get('/', function(req, res) {
   console.log('get index');
   res.sendFile(__dirname + '/index.html');
 });
  
+//*************************************** socket control **********************************************
 var sockets = {};
- 
 io.on('connection', function(socket) {
  
   sockets[socket.id] = socket;

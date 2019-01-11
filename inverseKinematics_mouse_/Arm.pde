@@ -22,13 +22,21 @@ class Arm {
     
     shoulderA = shoulder.getAngle();
     elbow.setStart(shoulder.getEnd().x,shoulder.getEnd().y);
-    wrist.setStart(elbow.getEnd().x, elbow.getEnd().y);
-    
-    System.out.println("end: " + wrist.getEnd().x + "," + wrist.getEnd().y + "elbow end: " + elbow.getEnd().x + " , " + elbow.getEnd().y);
+    wrist.setStart(elbow.getEnd().x, elbow.getEnd().y);    
     
     shoulder.show();
     elbow.show();
     wrist.show();
+  }
+  
+  //get the endafector's x pos
+  int getEndX() {
+    return (int) wrist.getEnd().x;
+  }
+  
+  //get the endafector's y pos
+  int getEndY() {
+    return (int) wrist.getEnd().y;
   }
   
   int getShoulderLen() {

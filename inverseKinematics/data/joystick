@@ -1,0 +1,4 @@
+Shadow maker
+X	X position	3	SLIDER	x	0	1.0	0.0
+Z	Z position	3	SLIDER	z	0	1.0	0.0
+TRAIL	Leave trail	1	BUTTON	1	0	0.0	0.0

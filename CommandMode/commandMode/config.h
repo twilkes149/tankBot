@@ -14,7 +14,23 @@ struct Config_t {
   int guardTime;   // Time uart must be silent before command char is entered
   int commandChar; // The character we have to enter in order to get into command mode
   int expireTime;
+
+  // ******************** Tankbot Configuration **************************
+  // ********** ARM ************
+  int turretAngle;
+  int shoulderAngle;
+  int elbowAngle;
+  int wristAngle;
+  int clawAngle;
+
+  // ******** WHEELS **********
+  int lw_speed;
+  int lw_dir;
+  int rw_speed;
+  int rw_dir;
 } config;
+
+#include "tankbot.h"
 
 // Each AT command is two characters long followed by an optional parameter
 // ... i.e to enter a command: AT<char1><char1>[optional whitespace][optional parameter]\n||\r||\n\r||\r\n
@@ -35,10 +51,11 @@ int getBaud(void* dummy);
 int getCommandChar(void* dummy);
 int getSetGuardTime(void* param);
 int getSetExpireTime(void* param);
+int command_exitCommandMode(void* param);
 
 // ********************************************** COMMAND TABLE ****************************************
 // Note: When adding an entry to the command table, COMMAND_TABLE_SIZE must also be updated
-#define COMMAND_TABLE_SIZE 4
+#define COMMAND_TABLE_SIZE 6
 static commandTableEntry commandTable[] = {
   #include "commandTable.h" // Command table is in this file for readability
 };
@@ -94,7 +111,7 @@ int getCommandChar(void* dummy) {
 }
 
 // gets or sets an INT command
-int getSetConfig(char c1, char c2, void* param) {
+int config_getSetConfig(char c1, char c2, void* param) {
   int index = getCommand(c1,c2);
   
   if (index < 0) {
@@ -111,18 +128,18 @@ int getSetConfig(char c1, char c2, void* param) {
     if (value < entry->min || value > entry->max) {
       return COMMAND_ERROR;
     } else {
-      *((int*) entry->variable) = value;
+      *((int*) entry->variable) = value;      
       return COMMAND_SET;
     }
   }
 }
 
 int getSetGuardTime(void* param) {
-  return getSetConfig('G','T', param);
+  return config_getSetConfig('G','T', param);
 }
 
 int getSetExpireTime(void* param) {
-  return getSetConfig('E','T', param);
+  return config_getSetConfig('E','T', param);
 }
 
 #endif

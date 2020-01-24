@@ -37,16 +37,17 @@ void command_init() {
   commandParam = -1;
 }
 
-void exit_command_mode(void* dummy) {
+int command_exitCommandMode(void* dummy) {
   command_init();
+  timer.stop(commandTimerID);
+  return COMMAND_SET;
 }
 
 void command_print_variable(int var) {
   // Because config values can be ints or ascii values we need a way to distinguish them
   // ... ASCII variables will have the upper bit set
-  // So the biggest config value we can ever have is 0x7FFF
-  
-  if (mIS_ASCII_COMMAND(var)) {
+  // So the biggest config value we can ever have is 0x7FFF  
+  if (mIS_ASCII_COMMAND(var)) {    
     Serial.write(mASCII_TO_INT(var));
     Serial.print('\r');
   } else {
@@ -70,7 +71,7 @@ void command_tick() {
     // if we are in command mode, refresh the timeout timer
     if (state != COMMAND_WAIT) {
       timer.stop(commandTimerID);      
-      commandTimerID = timer.after(config.expireTime, exit_command_mode, NULL);
+      commandTimerID = timer.after(config.expireTime, command_exitCommandMode, NULL);
     }
   }
 
@@ -84,7 +85,7 @@ void command_tick() {
 
         // Set a timer for exiting command mode after the expire time
         // ... save the timer ID for later when updating the timer
-        commandTimerID = timer.after(config.expireTime, exit_command_mode, NULL);
+        commandTimerID = timer.after(config.expireTime, command_exitCommandMode, NULL);
       }
     break;
 
@@ -139,6 +140,7 @@ void command_tick() {
               int power = globals_pow(10, (maxPow-i));              
               commandParam += digit*power;
             }
+            paramString[i] = 0;
           } // end for          
           
           if (!set) {
@@ -193,12 +195,12 @@ void command_tick() {
     case COMMAND_EXECUTE: // NOTE: This action will change state
       if (commandParam == -1) {
         result = config_runCommand(commandName[0], commandName[1], NULL);
-      } else {
+      } else {        
         result = config_runCommand(commandName[0], commandName[1], &commandParam);
       }
 
       switch (result) {
-          case COMMAND_SET: // we just set the command
+          case COMMAND_SET: // we just set/ran the command
             Serial.print("OK\r");
           break;
 
@@ -213,7 +215,12 @@ void command_tick() {
 
         index = 0;
         // We are done executing the command. Go back to the state where we expect the 'AT'
-        state = COMMAND_MODE_CHAR;
+        // Some commands exit command mode, so before we modify state, we need to check if we are still
+        // ... in the execute command mode state
+        if (state == COMMAND_EXECUTE) {
+          state = COMMAND_MODE_CHAR;
+          commandParam = -1;
+        }
     break;
   }
 

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+<script type="text/javascript" type="text/javascript">
+  // Connecting to ROS
+  // -----------------
+
+  const FWD     = {lw: 0, rw: 2};
+  const REV     = {lw: 2, rw: 0};
+  const STOP    = {lw: 1, rw: 1};
+  const RIGHT   = {lw: 0, rw: 0};
+  const LEFT    = {lw: 2, rw: 2}
+
+  var ros = new ROSLIB.Ros({
+    url : 'ws://192.168.43.242:9090'
+  });
+
+  ros.on('connection', function() {
+    console.log('Connected to websocket server.');
+  });
+
+  ros.on('error', function(error) {
+    console.log('Error connecting to websocket server: ', error);
+  });
+
+  ros.on('close', function() {
+    console.log('Connection to websocket server closed.');
+  });
+
+  var publisher = new ROSLIB.Topic({
+    ros: ros,
+    name: 'drive_cmd',
+    messageType: 'tankBot/drive'
+  });
+
+  // Publishing a Topic
+  // ------------------
+  function send_forward() {
+    var drive = new ROSLIB.Message(FWD);
+    publisher.publish(drive);
+    console.log("Published fwd");
+  }
+
+  function send_rev() {
+    var drive = new ROSLIB.Message(REV);
+    publisher.publish(drive);
+    console.log("Published rev");
+  }
+
+  function send_stop() {
+    var drive = new ROSLIB.Message(STOP);
+    publisher.publish(drive);
+    console.log("Published stop");
+  }
+
+  function send_right() {
+    var drive = new ROSLIB.Message(RIGHT);
+    publisher.publish(drive);
+    console.log("Published right");
+  }
+
+  function send_left() {
+    var drive = new ROSLIB.Message(LEFT);
+    publisher.publish(drive);
+    console.log("Published left");
+  }
+
+  var cmdVel = new ROSLIB.Topic({
+    ros : ros,
+    name : '/cmd_vel',
+    messageType : 'geometry_msgs/Twist'
+  });
+
+  var twist = new ROSLIB.Message({
+    linear : {
+      x : 0.1,
+      y : 0.2,
+      z : 0.3
+    },
+    angular : {
+      x : -0.1,
+      y : -0.2,
+      z : -0.3
+    }
+  });
+  cmdVel.publish(twist);
+</script>
+
+<style>
+  table {
+    margin: auto;
+    padding: 10px;
+    width: 50%;
+    align: center;
+  }
+
+  button {
+    padding: 10px;
+    background-color: #4CAF50;
+    border: black;
+    text-align: center;
+    border-radios: 5px;
+    margin: auto;
+  }
+  
+  h2 {
+    text-align: center;
+  }
+</style>
+</head>
+
+<body>
+  <h1>Tankbot control</h1>
+  <div>
+    <table>
+      <tr>
+        <td>
+          <h2> Drive control</h2>
+          <table>
+            <tr>
+              <td>
+                <button onmousedown="send_forward()" onmouseup="send_stop()" onmouseout="send_stop()">FWD</button>
+              </td>
+              <td><button onmousedown="send_right()" onmouseup="send_stop()" onmouseout="send_stop()">RIGHT</button></td>
+            </tr>
+
+            <tr>
+              <td>
+                <button onmousedown="send_rev()" onmouseup="send_stop()" onmouseout="send_stop()">REV</button>
+              </td>
+              <td><button onmousedown="send_left()" onmouseup="send_stop()" onmouseout="send_stop()">LEFT </button></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>

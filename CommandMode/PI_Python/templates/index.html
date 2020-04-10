@@ -17,7 +17,7 @@
   const LEFT    = {lw: 2, rw: 2}
 
   var ros = new ROSLIB.Ros({
-    url : 'ws://192.168.43.242:9090'
+    url : 'ws://{{ ip }}:9090'
   });
 
   ros.on('connection', function() {

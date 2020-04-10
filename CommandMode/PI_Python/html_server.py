@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 
 import rospy
+import netifaces as NI
 import SimpleHTTPServer
 import SocketServer
+from flask import Flask
+from flask import render_template
+
+app = Flask(__name__)
 
 HTML_DIRECTORY = "html"
 SERVER_PORT = 8181
@@ -18,10 +23,21 @@ def startServer():
     httpd = SocketServer.TCPServer(("", SERVER_PORT), Handler)
     print("Listening on port: " + str(SERVER_PORT))
     httpd.serve_forever()
+
+def getIPAddress():
+  ip = NI.ifaddresses('wlan0') # Get information on the wifi connection
+  return ip[NI.AF_INET][0]['addr']
+
+@app.route('/')
+def index():
+  ip = getIPAddress()
+  print(ip)
+  return render_template('index.html', ip=ip)
       
 if __name__ == "__main__":
     rospy.init_node('html_server')
-    startServer()
+    app.run(host="0.0.0.0", port=SERVER_PORT)
+    #startServer()
     rate = rospy.Rate(1) # 1 hz
     while not rospy.is_shutdown():
         rate.sleep()

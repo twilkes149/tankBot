@@ -10,14 +10,16 @@ from flask import render_template
 app = Flask(__name__)
 
 HTML_DIRECTORY = "html"
+SERVER_HOST = "0.0.0.0" # This allows flask to use the ip address of the machine
 SERVER_PORT = 8181
 
 # This ros node will start an html server that will serve
-# ... any files in the html directory, that is within the
-# ... same directory as this file
+# ... the ./templates/index.html file when a client
+# ... makes a GET request to the / route.
 # The intent is for this node to serve a rosjs webpage to
 # ... enable the tankBot to be controlled over the web
 
+# Legacy function used to serve all files in the html directory
 def startServer():
     Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
     httpd = SocketServer.TCPServer(("", SERVER_PORT), Handler)
@@ -36,7 +38,7 @@ def index():
       
 if __name__ == "__main__":
     rospy.init_node('html_server')
-    app.run(host="0.0.0.0", port=SERVER_PORT)
+    app.run(host=SERVER_HOST, port=SERVER_PORT)
     #startServer()
     rate = rospy.Rate(1) # 1 hz
     while not rospy.is_shutdown():

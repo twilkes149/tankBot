@@ -6,7 +6,7 @@ import os
 from std_msgs.msg import String
 
 def shutdown_callback(message):
-	os.system("shutdown")
+	os.system("shutdown -h now")
 
 if __name__ == "__main__":
 	rospy.init_node('utilities')

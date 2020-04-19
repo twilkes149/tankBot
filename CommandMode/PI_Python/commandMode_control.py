@@ -6,7 +6,7 @@ import sys                # Used to tell what OS we are running on
 import rospy              # Used to communicate with ROS
 
 # ROSPY messages
-from tankBot.msg import drive
+from tank_bot.msg import drive
 
 ENTER_COMMAND_MODE = b'+++'
 AT_CMD_PREFIX = b'AT'
@@ -85,6 +85,7 @@ class PI_Command:
   # Function to enter command mode on the arduino
   def enterCommandMode(self):
     if not self.in_command_mode or (time.time() - self.command_mode_time) >= ET_TIME:
+      time.sleep(1.2)
       self.arduino.write(ENTER_COMMAND_MODE)
     self.in_command_mode = True
     self.command_mode_time = time.time()
@@ -112,6 +113,7 @@ class PI_Command:
         self.no_response_count = 0
     else:
       self.no_response_count = 0
+      print(self.arduino.read(self.arduino.in_waiting))
       
 
   # Destructor to close the arduino port

@@ -16,8 +16,9 @@ DRIVE_CMDS = {        # Maps constants with their AT command values
   "LW_SPEED": b"LS",
   "LW_DIR":   b"LD" 
 }
-AUTO_STOP = 10 # Stop driving after 10 seconds if we don't get a new ros message
-ET_TIME = 10   # Arduino command mode expires after 10 seconds of UART silence
+AUTO_STOP = 10      # Stop driving after 10 seconds if we don't get a new ros message
+ET_TIME = 10        # Arduino command mode expires after 10 seconds of UART silence
+NO_RESPONSE_MAX = 5 # If we get no response from the arduino after 5 tries, renter cmd mode
 
 DRIVE_MSG = drive()
 
@@ -49,6 +50,7 @@ class PI_Command:
     self.auto_stop_timer = 0
     self.in_command_mode = False
     self.command_mode_time = 0
+    self.no_response_count = 0
 
   def open_arduino_port(self):
     self.arduino.open()
@@ -62,19 +64,19 @@ class PI_Command:
     if drive_msg.rw == DRIVE_MSG.STOP:
       self.rw_speed = 0
     elif drive_msg.rw == DRIVE_MSG.FWD:
-      self.rw_speed = 100
+      self.rw_speed = 150
       self.rw_dir = drive_msg.FWD
     elif drive_msg.rw == DRIVE_MSG.REV:
-      self.rw_speed = 100
+      self.rw_speed = 150
       self.rw_dir = drive_msg.REV
       
     if drive_msg.lw == DRIVE_MSG.STOP:
       self.lw_speed = 0
     elif drive_msg.lw == DRIVE_MSG.FWD:
-      self.lw_speed = 100
+      self.lw_speed = 150
       self.lw_dir = drive_msg.FWD
     elif drive_msg.lw == DRIVE_MSG.REV:
-      self.lw_speed = 100
+      self.lw_speed = 150
       self.lw_dir = drive_msg.REV
 
     # We got a message update, so update the timer
@@ -101,6 +103,16 @@ class PI_Command:
     self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["RW_SPEED"] + " " + str(self.rw_speed) + "\n")
     self.command_mode_time = time.time() # Keep track of how long its been since we last wrote
                                          # ... to the arduino
+                            
+    # If the arduino hasn't responded after 5 times, re-enter cmd mode
+    if not self.arduino.in_waiting:
+      self.no_response_count += 1
+      if self.no_response_count > NO_RESPONSE_MAX:
+        self.in_command_mode = False
+        self.no_response_count = 0
+    else:
+      self.no_response_count = 0
+      
 
   # Destructor to close the arduino port
   def __del__(self):

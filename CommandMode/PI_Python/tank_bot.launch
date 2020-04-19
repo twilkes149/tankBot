@@ -1,0 +1,7 @@
+<launch>
+	<node pkg="tank_bot" name="html_server" type="html_server.py"/>
+	<node pkg="tank_bot" name="control" type="commandMode_control.py"/>
+	<node pkg="tank_bot" name="utilities" type="utilities.py"/>
+	
+	<include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
+</launch>

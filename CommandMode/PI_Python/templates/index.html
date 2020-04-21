@@ -7,14 +7,18 @@
 <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
 
 <script type="text/javascript" type="text/javascript">
-  // Connecting to ROS
-  // -----------------
 
-  const FWD     = {lw: 0, rw: 2};
-  const REV     = {lw: 2, rw: 0};
-  const STOP    = {lw: 1, rw: 1};
-  const RIGHT   = {lw: 0, rw: 0};
-  const LEFT    = {lw: 2, rw: 2}
+  const FWD        = {lw: 0, rw: 2};
+  const REV        = {lw: 2, rw: 0};
+  const STOP       = {lw: 1, rw: 1};
+  const RIGHT      = {lw: 0, rw: 0};
+  const LEFT       = {lw: 2, rw: 2};
+  const LEFT_FWD   = {lw: 0, rw: 3};
+  const LEFT_REV   = {lw: 2, rw: 3};
+  const LEFT_STOP  = {lw: 1, rw: 3};
+  const RIGHT_FWD  = {lw: 3, rw: 2};
+  const RIGHT_REV  = {lw: 3, rw: 0};
+  const RIGHT_STOP = {lw: 3, rw: 1};
 
   var ros = new ROSLIB.Ros({
     url : 'ws://{{ ip }}:9090'
@@ -80,6 +84,103 @@
     var drive = new ROSLIB.Message(LEFT);
     publisher.publish(drive);
     console.log("Published left");
+  }
+
+  function send_left_fwd() {
+    var drive = new ROSLIB.Message(LEFT_FWD);
+    publisher.publish(drive);
+    console.log("Published left_fwd");
+  }
+
+  function send_left_rev() {
+    var drive = new ROSLIB.Message(LEFT_REV);
+    publisher.publish(drive);
+    console.log("Published left_rev");
+  }
+
+  function send_left_stop() {
+    var drive = new ROSLIB.Message(LEFT_STOP);
+    publisher.publish(drive);
+    console.log("Published left_stop");
+  }
+
+  function send_right_fwd() {
+    var drive = new ROSLIB.Message(RIGHT_FWD);
+    publisher.publish(drive);
+    console.log("Published right_fwd");
+  }
+
+  function send_right_rev() {
+    var drive = new ROSLIB.Message(RIGHT_REV);
+    publisher.publish(drive);
+    console.log("Published right_rev");
+  }
+
+  function send_right_stop() {
+    var drive = new ROSLIB.Message(RIGHT_STOP);
+    publisher.publish(drive);
+    console.log("Published right_stop");
+  }
+
+  var keyPressed = {};
+
+  // When a key is pressed, we want to tell the motor to go fwd or rev
+  document.onkeydown = (event) => {    
+    // Only register the key on the first press event
+    if (keyPressed[event.keyCode]) {
+      return;
+    }
+
+    switch (event.keyCode) {
+      case 81: // Q
+        send_left_fwd();
+      break;
+
+      case 65: // A
+        send_left_rev();
+      break;
+
+      case 87: // W
+        send_right_fwd();
+      break;
+
+      case 83: // S
+        send_right_rev();
+      break;
+
+      default:
+        send_left_stop();
+        send_right_stop();
+      break;
+    }
+    keyPressed[event.keyCode] = true;
+  }
+
+  // When a key is released we want to tell the motor to stop
+  document.onkeyup = (event) => {
+    switch (event.keyCode) {
+      case 81: // Q
+        send_left_stop();
+      break;
+
+      case 65: // A
+        send_left_stop();
+      break;
+
+      case 87: // W
+        send_right_stop();
+      break;
+
+      case 83: // S
+        send_right_stop();
+      break;
+
+      default:
+        send_left_stop();
+        send_right_stop();
+      break;
+    }
+    keyPressed[event.keyCode] = false;
   }
 </script>
 

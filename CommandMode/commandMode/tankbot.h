@@ -6,16 +6,33 @@ extern int config_getSetConfig(char c1, char c2, void* param);
 
 enum driveDir {
   FWD   = 0,
-  REV   = 1,
+  REV   = 2,
 };
 
 // ********************************* HELPER FUNCTIONS **************************
+void drivePWMTick() {
+  left_wheel.Software_PWM_tick();
+  right_wheel.Software_PWM_tick();
+}
+
 void setLeftSpeed(int speed) {
-  analogWrite(LEFT_PWM_PIN, speed);
+  //analogWrite(LEFT_PWM_PIN, speed);
+  left_wheel.Software_PWM_setPercent(speed);
+  if (speed == 0) {
+    left_wheel.Software_PWM_stop();
+  } else {
+    left_wheel.Software_PWM_start();
+  }
 }
 
 void setRightSpeed(int speed) {
-  analogWrite(RIGHT_PWM_PIN, speed);
+  //analogWrite(RIGHT_PWM_PIN, speed);
+  right_wheel.Software_PWM_setPercent(speed);
+  if (speed == 0) {
+    right_wheel.Software_PWM_stop();
+  } else {
+    right_wheel.Software_PWM_start();
+  }
 }
 
 void setLeftDriveDir(int dir) {
@@ -29,6 +46,11 @@ void setLeftDriveDir(int dir) {
       digitalWrite(LEFT_A_PIN, LOW);
       digitalWrite(LEFT_B_PIN, HIGH);
     break;
+
+    default:
+      digitalWrite(LEFT_A_PIN, LOW);
+      digitalWrite(LEFT_B_PIN, LOW);
+    break;
   }
 }
 
@@ -41,6 +63,11 @@ void setRightDriveDir(int dir) {
 
     case REV:
       digitalWrite(RIGHT_A_PIN, HIGH);
+      digitalWrite(RIGHT_B_PIN, LOW);
+    break;
+
+    default:
+      digitalWrite(RIGHT_A_PIN, LOW);
       digitalWrite(RIGHT_B_PIN, LOW);
     break;
   }
@@ -67,6 +94,7 @@ void setClawAngle(int angle) {
 }
 
 // ********************************* CONFIG FUNCTIONS **************************
+// ********************************* DRIVE FUNCTIONS ***************************
 int getSetLeftDir(void* param) {
   if (param == NULL) {
     return config.lw_dir;
@@ -84,7 +112,7 @@ int getSetRightDir(void* param) {
   } else {
     int result = config_getSetConfig('R', 'D', param);
 
-    setLeftDriveDir(config.rw_dir);
+    setRightDriveDir(config.rw_dir);
     return result;    
   }
 }
@@ -111,6 +139,7 @@ int getSetLeftSpeed(void* param) {
   }
 }
 
+// ******************************** ARM FUNCTIONS ******************************
 int getSetTurretAngle(void* param) {
   if (param == NULL) {
     return config.turretAngle;

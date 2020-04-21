@@ -28,8 +28,9 @@ COMMAND_WRITE('S', 'A', 50, 0, 180, getSetShoulderAngle, &config.shoulderAngle),
 COMMAND_WRITE('E', 'A', 90, 0, 180, getSetElbowAngle, &config.elbowAngle),
 COMMAND_WRITE('W', 'A', 110, 0, 180, getSetWristAngle, &config.wristAngle),
 COMMAND_WRITE('C', 'A', 30, 0, 180, getSetClawAngle, &config.clawAngle),
-COMMAND_WRITE('L', 'S', 0, 0, 255, getSetLeftSpeed, &config.lw_speed),
-COMMAND_WRITE('R', 'S', 0, 0, 255, getSetRightSpeed, &config.rw_speed),
+
+COMMAND_WRITE('L', 'S', 0, 0, 100, getSetLeftSpeed, &config.lw_speed),
+COMMAND_WRITE('R', 'S', 0, 0, 100, getSetRightSpeed, &config.rw_speed),
 COMMAND_WRITE('L', 'D', 0, 0, 2, getSetLeftDir, &config.lw_dir),
 COMMAND_WRITE('R', 'D', 0, 0, 2, getSetRightDir, &config.rw_dir),
 

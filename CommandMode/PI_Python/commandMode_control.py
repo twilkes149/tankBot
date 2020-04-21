@@ -60,23 +60,24 @@ class PI_Command:
     print("Opened arduino serial port")
 
   def remote_commands_callback(self, drive_msg):
-    print("got message")
+    SPEED = 80
+
     if drive_msg.rw == DRIVE_MSG.STOP:
       self.rw_speed = 0
     elif drive_msg.rw == DRIVE_MSG.FWD:
-      self.rw_speed = 150
+      self.rw_speed = SPEED
       self.rw_dir = drive_msg.FWD
     elif drive_msg.rw == DRIVE_MSG.REV:
-      self.rw_speed = 150
+      self.rw_speed = SPEED
       self.rw_dir = drive_msg.REV
-      
+
     if drive_msg.lw == DRIVE_MSG.STOP:
       self.lw_speed = 0
     elif drive_msg.lw == DRIVE_MSG.FWD:
-      self.lw_speed = 150
+      self.lw_speed = SPEED
       self.lw_dir = drive_msg.FWD
     elif drive_msg.lw == DRIVE_MSG.REV:
-      self.lw_speed = 150
+      self.lw_speed = SPEED
       self.lw_dir = drive_msg.REV
 
     # We got a message update, so update the timer
@@ -104,7 +105,7 @@ class PI_Command:
     self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["RW_SPEED"] + " " + str(self.rw_speed) + "\n")
     self.command_mode_time = time.time() # Keep track of how long its been since we last wrote
                                          # ... to the arduino
-                            
+
     # If the arduino hasn't responded after 5 times, re-enter cmd mode
     if not self.arduino.in_waiting:
       self.no_response_count += 1
@@ -114,7 +115,7 @@ class PI_Command:
     else:
       self.no_response_count = 0
       print(self.arduino.read(self.arduino.in_waiting))
-      
+
 
   # Destructor to close the arduino port
   def __del__(self):
@@ -128,8 +129,8 @@ def main():
   rate = rospy.Rate(10) # 10hz
   while not rospy.is_shutdown():
     command.write_to_arduino()
-    rate.sleep()  
-  
+    rate.sleep()
+
 
 if __name__ == "__main__":
   main()

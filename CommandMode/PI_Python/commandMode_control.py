@@ -60,7 +60,7 @@ class PI_Command:
     print("Opened arduino serial port")
 
   def remote_commands_callback(self, drive_msg):
-    SPEED = 80
+    SPEED = 90
 
     if drive_msg.rw == DRIVE_MSG.STOP:
       self.rw_speed = 0

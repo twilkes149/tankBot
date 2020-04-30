@@ -2,6 +2,7 @@ from imutils.video import VideoStream
 from flask import Response
 from flask import Flask
 from flask import render_template
+from flask_socketio import SocketIO
 import threading
 import argparse
 import datetime
@@ -14,9 +15,17 @@ outputFrame = None
 lock = threading.Lock()
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "tankBot!@#"
+socketio = SocketIO(app)
 
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
+
+# Method for receiving socket messages
+@socketio.on('json')
+def handle_json(json):
+    print(json['data'])
+    print("message: " + str(json))
 
 
 @app.route("/")
@@ -54,6 +63,9 @@ def video_feed():
     return Response(generate(), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 
+def start_socket_server():
+    socketio.run(app)
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("-i", "--ip", type=str, required=True, help="ip address of the device")
@@ -63,6 +75,10 @@ if __name__ == "__main__":
     t = threading.Thread(target=stream)
     t.daemon = True
     t.start()
+
+    p = threading.Thread(target=start_socket_server)
+    p.daemon = True
+    p.start()
 
     app.run(host=args["ip"], port=args["port"], debug=True, threaded=True, use_reloader=False)
 

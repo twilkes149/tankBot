@@ -1,8 +1,11 @@
+#!/usr/bin/env python
 from imutils.video import VideoStream
 from flask import Response
 from flask import Flask
 from flask import render_template
 from flask_socketio import SocketIO
+from tankBot_control import PI_Command
+
 import threading
 import argparse
 import datetime
@@ -13,13 +16,21 @@ import cv2
 
 outputFrame = None
 lock = threading.Lock()
+arduino_lock = threading.lock()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "tankBot!@#"
 socketio = SocketIO(app)
+arduino_control = PI_Command()
 
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
+
+def write_to_arduino():
+    while True:
+        with arduino_lock:
+            arduino_control.write_to_arduino()
+        time.sleep(.2)
 
 # Method for receiving socket messages
 @socketio.on('connected')
@@ -33,7 +44,8 @@ def shutdown(message):
 @socketio.on('drive')
 def drive_callback(json):
     print(json['data'])
-
+    with arduino_lock:
+        arduino_control.remote_commands_callback(json['data'])
 
 @app.route("/")
 def index():
@@ -78,6 +90,10 @@ if __name__ == "__main__":
     ap.add_argument("-i", "--ip", type=str, required=True, help="ip address of the device")
     ap.add_argument("-o", "--port", type=int, required=True, help="port number of the server")
     args = vars(ap.parse_args())
+
+    arduino = threading.Thread(target=write_to_arduino)
+    arduino.daemon = True
+    arduino.start()
 
     t = threading.Thread(target=stream)
     t.daemon = True

@@ -22,8 +22,8 @@ vs = VideoStream(src=0).start()
 time.sleep(2.0)
 
 # Method for receiving socket messages
-@socketio.on('connect')
-def handle_json(json):
+@socketio.on('connected')
+def connected(json):
     print(json['data'])    
 
 @socketio.on('shutdown')

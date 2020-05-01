@@ -5,7 +5,7 @@
 		<script type="text/javascript" charset="utf-8">
 			var socket = io();
 			socket.on('connect', function() {
-				socket.emit('json', {data: 'Connected'});
+				socket.emit('connected', {data: 'Connected'});
 				console.log("Connected");
 			});;
 

@@ -12,6 +12,7 @@ import datetime
 import imutils
 import time
 import cv2
+import os
 
 
 outputFrame = None
@@ -40,10 +41,10 @@ def connected(json):
 @socketio.on('shutdown')
 def shutdown(message):
     print("Shutting down")
+    os.system("sudo shutdown -h now")
 
 @socketio.on('drive')
-def drive_callback(json):
-    print(json['data'])
+def drive_callback(json):    
     with arduino_lock:
         arduino_control.remote_commands_callback(json['data'])
 

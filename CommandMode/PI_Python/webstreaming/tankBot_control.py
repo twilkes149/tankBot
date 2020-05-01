@@ -53,9 +53,7 @@ class PI_Command:
     print("Opened arduino serial port")
 
   def remote_commands_callback(self, drive_msg):
-    SPEED = 90
-    print(drive_msg)
-
+    SPEED = 90    
     if drive_msg.rw == DRIVE_MSG['STOP']:
       self.rw_speed = 0
     elif drive_msg.rw == DRIVE_MSG['FWD']:
@@ -108,7 +106,7 @@ class PI_Command:
         self.no_response_count = 0
     else:
       self.no_response_count = 0
-      print(self.arduino.read(self.arduino.in_waiting))
+      #print(self.arduino.read(self.arduino.in_waiting))
 
 
   # Destructor to close the arduino port

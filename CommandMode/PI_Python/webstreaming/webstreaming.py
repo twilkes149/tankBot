@@ -22,10 +22,17 @@ vs = VideoStream(src=0).start()
 time.sleep(2.0)
 
 # Method for receiving socket messages
-@socketio.on('json')
+@socketio.on('connect')
 def handle_json(json):
+    print(json['data'])    
+
+@socketio.on('shutdown')
+def shutdown(message):
+    print("Shutting down")
+
+@socketio.on('drive')
+def drive_callback(json):
     print(json['data'])
-    print("message: " + str(json))
 
 
 @app.route("/")

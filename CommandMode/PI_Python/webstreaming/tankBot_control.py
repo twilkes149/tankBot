@@ -1,3 +1,7 @@
+import serial
+import time
+import sys
+
 ENTER_COMMAND_MODE = b'+++'
 AT_CMD_PREFIX = b'AT'
 DRIVE_CMDS = {        # Maps constants with their AT command values
@@ -56,21 +60,21 @@ class PI_Command:
     SPEED = 90
     print(drive_msg)
 
-    if drive_msg.rw == DRIVE_MSG['STOP']:
+    if drive_msg['rw'] == DRIVE_MSG['STOP']:
       self.rw_speed = 0
-    elif drive_msg.rw == DRIVE_MSG['FWD']:
+    elif drive_msg['rw'] == DRIVE_MSG['FWD']:
       self.rw_speed = SPEED
       self.rw_dir = DRIVE_MSG['FWD']
-    elif drive_msg.rw == DRIVE_MSG['REV']:
+    elif drive_msg['rw'] == DRIVE_MSG['REV']:
       self.rw_speed = SPEED
       self.rw_dir = DRIVE_MSG['REV']
 
-    if drive_msg.lw == DRIVE_MSG['STOP']:
+    if drive_msg['lw'] == DRIVE_MSG['STOP']:
       self.lw_speed = 0
-    elif drive_msg.lw == DRIVE_MSG['FWD']:
+    elif drive_msg['lw'] == DRIVE_MSG['FWD']:
       self.lw_speed = SPEED
       self.lw_dir = DRIVE_MSG['FWD']
-    elif drive_msg.lw == DRIVE_MSG['REV']:
+    elif drive_msg['lw'] == DRIVE_MSG['REV']:
       self.lw_speed = SPEED
       self.lw_dir = DRIVE_MSG['REV']
 
@@ -93,10 +97,10 @@ class PI_Command:
       self.rw_speed = 0
 
     self.enterCommandMode()
-    self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["LW_DIR"]   + " " + str(self.lw_dir)   + "\n")
-    self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["LW_SPEED"] + " " + str(self.lw_speed) + "\n")
-    self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["RW_DIR"]   + " " + str(self.rw_dir)   + "\n")
-    self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["RW_SPEED"] + " " + str(self.rw_speed) + "\n")
+    self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["LW_DIR"]   + b" " + str(self.lw_dir).encode('utf-8')   + b"\n")
+    self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["LW_SPEED"] + b" " + str(self.lw_speed).encode('utf-8') + b"\n")
+    self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["RW_DIR"]   + b" " + str(self.rw_dir).encode('utf-8')   + b"\n")
+    self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["RW_SPEED"] + b" " + str(self.rw_speed).encode('utf-8') + b"\n")
     self.command_mode_time = time.time() # Keep track of how long its been since we last wrote
                                          # ... to the arduino
 

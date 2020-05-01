@@ -17,7 +17,7 @@ import os
 
 outputFrame = None
 lock = threading.Lock()
-arduino_lock = threading.lock()
+arduino_lock = threading.Lock()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "tankBot!@#"
@@ -31,7 +31,7 @@ def write_to_arduino():
     while True:
         with arduino_lock:
             arduino_control.write_to_arduino()
-        time.sleep(.2)
+        time.sleep(.15)
 
 # Method for receiving socket messages
 @socketio.on('connected')

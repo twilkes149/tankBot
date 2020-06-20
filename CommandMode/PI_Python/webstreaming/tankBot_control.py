@@ -15,8 +15,8 @@ ET_TIME = 10        # Arduino command mode expires after 10 seconds of UART sile
 NO_RESPONSE_MAX = 5 # If we get no response from the arduino after 5 tries, renter cmd mode
 
 DRIVE_MSG = {
-  "STOP": 0,
-  "FWD":  1,
+  "STOP": 1,
+  "FWD":  0,
   "REV":  2,
   "NULL": 3
 }
@@ -58,7 +58,7 @@ class PI_Command:
 
   def remote_commands_callback(self, drive_msg):
     SPEED = 90    
-    if drive_msg.rw == DRIVE_MSG['STOP']:
+    if drive_msg['rw'] == DRIVE_MSG['STOP']:
       self.rw_speed = 0
     elif drive_msg['rw'] == DRIVE_MSG['FWD']:
       self.rw_speed = SPEED

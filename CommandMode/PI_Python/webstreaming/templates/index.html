@@ -9,6 +9,15 @@
 				console.log("Connected");
 			});;
 
+			// KEY:
+			// 0 - FWD
+			// 1 - STOP
+			// 2 - REV
+			// 3 - PREV STATE
+			const fwd 			 = 0;
+			const stop       = 1;
+			const rev        = 2;
+			const prev       = 3;
 			const FWD        = {lw: 0, rw: 2};
 		  const REV        = {lw: 2, rw: 0};
 		  const STOP       = {lw: 1, rw: 1};
@@ -20,12 +29,129 @@
 		  const RIGHT_FWD  = {lw: 3, rw: 2};
 		  const RIGHT_REV  = {lw: 3, rw: 0};
 		  const RIGHT_STOP = {lw: 3, rw: 1};
+		  var ARM_DATA     = {turret: prev, 
+		  										shoulder: prev, 
+		  										elbow: prev, 
+		  										wrist: prev, 
+		  										claw: prev
+		  									};
 
 		  function send_shutdown() {
 		    socket.emit("shutdown", {data: "shutdown"});
 		    console.log("shutdown")
 		  }
+		  // **********************************  ARM FUNCTIONS  ************************
+		  // TURRET
+		  function turret_cw() {
+		  	let arm = ARM_DATA;
+		  	arm.turret = fwd;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published turret_cw", arm);
+		  }
+
+		  function turret_ccw() {
+		  	let arm = ARM_DATA;
+		  	arm.turret = rev;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published turret_ccw", arm);
+		  }
+
+		  function turret_stop() {
+		  	let arm = ARM_DATA;
+		  	arm.turret = stop;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published turret_stop", arm);
+		  }
+
+		  // SHOULDER
+		  function shoulder_down() {
+		  	let arm = ARM_DATA;
+		  	arm.shoulder = fwd;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published shoulder down", arm);
+		  }
+
+		  function shoulder_up() {
+		  	let arm = ARM_DATA;
+		  	arm.shoulder = rev;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published shoulder up", arm);
+		  }
+
+		  function shoulder_stop() {
+		  	let arm = ARM_DATA;
+		  	arm.shoulder = stop;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published turret_stop", arm);
+		  }
+
+		  //ELBOW
+		  function elbow_down() {
+		  	let arm = ARM_DATA;
+		  	arm.elbow = fwd;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published elbow down", arm);
+		  }
+
+		  function elbow_up() {
+		  	let arm = ARM_DATA;
+		  	arm.elbow = rev;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published elbow up", arm);
+		  }
+
+		  function elbow_stop() {
+		  	let arm = ARM_DATA;
+		  	arm.elbow = stop;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published elbow_stop", arm);
+		  }
+
+		  // WRIST
+		  function wrist_down() {
+		  	let arm = ARM_DATA;
+		  	arm.wrist = fwd;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published wrist down", arm);
+		  }
+
+		  function wrist_up() {
+		  	let arm = ARM_DATA;
+		  	arm.wrist = rev;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published wrist up", arm);
+		  }
+
+		  function wrist_stop() {
+		  	let arm = ARM_DATA;
+		  	arm.wrist = stop;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published wrist_stop", arm);
+		  }
+
+		  // CLAW
+		  function claw_close() {
+		  	let arm = ARM_DATA;
+		  	arm.claw = fwd;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published claw close", arm);
+		  }
+
+		  function claw_open() {
+		  	let arm = ARM_DATA;
+		  	arm.claw = rev;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published claw open", arm);
+		  }
+
+		  function claw_stop() {
+		  	let arm = ARM_DATA;
+		  	arm.claw = stop;
+		  	socket.emit("arm", {data: arm});
+		  	console.log("Published claw_stop", arm);
+		  }
 		  
+		  // ********************************** DRIVE FUNCTIONS ************************
 		  function send_forward() {
 		    socket.emit("drive", {data: FWD});
 		    console.log("Published fwd");
@@ -91,25 +217,73 @@
 		    }
 
 		    switch (event.keyCode) {
+		      // ARM
 		      case 81: // Q
-		        send_left_fwd();
+		        elbow_stop();
 		      break;
 
 		      case 65: // A
-		        send_left_rev();
+		        shoulder_down();
 		      break;
 
 		      case 87: // W
-		        send_right_fwd();
+		        elbow_up();
 		      break;
 
 		      case 83: // S
-		        send_right_rev();
+		        shoulder_up();
 		      break;
+
+		      case 90: // z
+		      	turret_ccw()
+		      break;
+
+		      case 88: // x
+		      	turret_cw();
+		      break;
+
+		      case 67: // c
+		      	wrist_down();
+		      break;
+
+		      case 86: // v
+		      	wrist_up();
+		      break;
+
+		      case 68: // d
+		      	claw_close();
+		      break;
+
+		      case 70: // f
+		      	claw_open();
+		      break;
+
+		      // DRIVE
+		      case 73: // i
+		      	send_left_fwd();
+		      break;
+
+		      case 75: // k
+		      	send_left_rev();
+		      break;
+
+		      case 79: // o
+		      	send_right_fwd();
+		      break;
+
+		      case 76: // l 
+		      	send_right_rev();
+		      break;
+
 
 		      default:
 		        send_left_stop();
 		        send_right_stop();
+		        turret_stop();
+		        shoulder_stop();
+		        elbow_stop();
+		        wrist_stop();
+		        claw_stop();
 		      break;
 		    }
 		    keyPressed[event.keyCode] = true;
@@ -118,25 +292,72 @@
 		  // When a key is released we want to tell the motor to stop
 		  document.onkeyup = (event) => {
 		    switch (event.keyCode) {
+		    	// ARM
 		      case 81: // Q
-		        send_left_stop();
+		        elbow_stop();
 		      break;
 
 		      case 65: // A
-		        send_left_stop();
+		        shoulder_stop();
 		      break;
 
 		      case 87: // W
-		        send_right_stop();
+		        elbow_stop();
 		      break;
 
 		      case 83: // S
-		        send_right_stop();
+		        shoulder_stop();
+		      break;
+
+		      case 90: // z
+		      	turret_stop()
+		      break;
+
+		      case 88: // x
+		      	turret_stop();
+		      break;
+
+		      case 67: // c
+		      	wrist_stop();
+		      break;
+
+		      case 86: // v
+		      	wrist_stop();
+		      break;
+
+		      case 68: // d
+		      	claw_stop();
+		      break;
+
+		      case 70: // f
+		      	claw_stop();
+		      break;
+
+		      // DRIVE
+		      case 73: // i
+		      	send_left_stop();
+		      break;
+
+		      case 75: // k
+		      	send_left_stop();
+		      break;
+
+		      case 79: // o
+		      	send_right_stop();
+		      break;
+
+		      case 76: // l 
+		      	send_right_stop();
 		      break;
 
 		      default:
 		        send_left_stop();
 		        send_right_stop();
+		        turret_stop();
+		        shoulder_stop();
+		        elbow_stop();
+		        wrist_stop();
+		        claw_stop();
 		      break;
 		    }
 		    keyPressed[event.keyCode] = false;

@@ -29,8 +29,9 @@ time.sleep(2.0)
 
 def write_to_arduino():
     while True:
-        with arduino_lock:
+        with arduino_lock:            
             arduino_control.write_to_arduino()
+            arduino_control.arm_tick()
         time.sleep(.15)
 
 # Method for receiving socket messages
@@ -46,7 +47,12 @@ def shutdown(message):
 @socketio.on('drive')
 def drive_callback(json):    
     with arduino_lock:
-        arduino_control.remote_commands_callback(json['data'])
+        arduino_control.drive_commands_callback(json['data'])
+
+@socketio.on('arm')
+def arm_callback(json):
+    with arduino_lock:
+        arduino_control.arm_commands_callback(json['data'])
 
 @app.route("/")
 def index():

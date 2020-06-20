@@ -21,6 +21,28 @@ DRIVE_MSG = {
   "NULL": 3
 }
 
+FWD  = 0
+STOP = 1
+REV  = 2
+PREV = 3
+
+class Joint:
+  def __init__(self, name, min, max):
+    self.name     = name
+    self.angle    = None
+    self.state    = STOP   
+    self.minAngle = min
+    self.maxAngle = max
+
+class Arm:
+  def __init__(self):
+    self.turret   = Joint("Turret",   0, 180)
+    self.shoulder = Joint("Shoulder", 0, 130)
+    self.elbow    = Joint("Elbow",    0, 180)
+    self.wrist    = Joint("Wrist",    0, 180)
+    self.claw     = Joint("Claw",     10, 80)
+    self.joints   = [self.turret, self.shoulder, self.elbow, self.wrist, self.claw]
+
 class PI_Command:
   def __init__(self):
     self.commandMode = False
@@ -48,6 +70,7 @@ class PI_Command:
     self.in_command_mode = False
     self.command_mode_time = 0
     self.no_response_count = 0
+    self.arm = Arm()
 
   def open_arduino_port(self):
     self.arduino.open()
@@ -56,7 +79,34 @@ class PI_Command:
     time.sleep(4)
     print("Opened arduino serial port")
 
-  def remote_commands_callback(self, drive_msg):
+  def arm_tick(self):
+    self.armChanged = False
+    for joint in self.arm:
+      if joint.state == FWD:
+        joint.angle += 1
+        if join.angle > join.max:
+          joing.angle = joint.max
+      elif joint.state == REV:
+        joint.angle -= 1
+        if joint.angle < joint.min:
+          joint.angle = joint.min
+  
+  def arm_commands_callback(self, arm_msg):
+    print(arm_msg);
+
+    if arm_msg.turret != PREV:
+      self.arm.turret.state = arm_msg.turret
+    if arm_msg.shoulder != PREV:
+      self.arm.shoulder.state = arm_msg.shoulder
+    if arm_msg.elbow != PREV:
+      self.arm.elbow.state = arm_msg.elbow
+    if arm_msg.wrist != PREV:
+      self.arm.wrist.state = arm_msg.wrist
+    if arm_msg.claw != PREV:
+      self.arm.claw.state = arm_msg.claw    
+
+
+  def drive_commands_callback(self, drive_msg):
     SPEED = 90    
     if drive_msg.rw == DRIVE_MSG['STOP']:
       self.rw_speed = 0

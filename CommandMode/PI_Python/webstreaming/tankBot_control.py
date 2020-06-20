@@ -27,20 +27,20 @@ REV  = 2
 PREV = 3
 
 class Joint:
-  def __init__(self, name, min, max):
+  def __init__(self, name, default, min, max):
     self.name     = name
-    self.angle    = None
+    self.angle    = default
     self.state    = STOP   
     self.minAngle = min
     self.maxAngle = max
 
 class Arm:
   def __init__(self):
-    self.turret   = Joint("Turret",   0, 180)
-    self.shoulder = Joint("Shoulder", 0, 130)
-    self.elbow    = Joint("Elbow",    0, 180)
-    self.wrist    = Joint("Wrist",    0, 180)
-    self.claw     = Joint("Claw",     10, 80)
+    self.turret   = Joint("Turret",   80,  0, 180)
+    self.shoulder = Joint("Shoulder", 0,   0, 130)
+    self.elbow    = Joint("Elbow",    132, 0, 180)
+    self.wrist    = Joint("Wrist",    158, 0, 180)
+    self.claw     = Joint("Claw",     30, 10,  80)
     self.joints   = [self.turret, self.shoulder, self.elbow, self.wrist, self.claw]
 
 class PI_Command:
@@ -81,7 +81,7 @@ class PI_Command:
 
   def arm_tick(self):
     self.armChanged = False
-    for joint in self.arm:
+    for joint in self.arm.joints:
       if joint.state == FWD:
         joint.angle += 1
         if join.angle > join.max:
@@ -94,16 +94,16 @@ class PI_Command:
   def arm_commands_callback(self, arm_msg):
     print(arm_msg);
 
-    if arm_msg.turret != PREV:
-      self.arm.turret.state = arm_msg.turret
-    if arm_msg.shoulder != PREV:
-      self.arm.shoulder.state = arm_msg.shoulder
-    if arm_msg.elbow != PREV:
-      self.arm.elbow.state = arm_msg.elbow
-    if arm_msg.wrist != PREV:
-      self.arm.wrist.state = arm_msg.wrist
-    if arm_msg.claw != PREV:
-      self.arm.claw.state = arm_msg.claw    
+    if arm_msg["turret"] != PREV:
+      self.arm.turret.state = arm_msg["turret"]
+    if arm_msg["shoulder"] != PREV:
+      self.arm.shoulder.state = arm_msg["shoulder"]
+    if arm_msg["elbow"] != PREV:
+      self.arm.elbow.state = arm_msg["elbow"]
+    if arm_msg["wrist"] != PREV:
+      self.arm.wrist.state = arm_msg["wrist"]
+    if arm_msg["claw"] != PREV:
+      self.arm.claw.state = arm_msg["claw"]    
 
 
   def drive_commands_callback(self, drive_msg):

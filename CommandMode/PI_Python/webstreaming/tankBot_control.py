@@ -10,6 +10,13 @@ DRIVE_CMDS = {        # Maps constants with their AT command values
   "LW_SPEED": b"LS",
   "LW_DIR":   b"LD" 
 }
+ARM_CMDS = {
+  "TURRET":   b"TS",
+  "SHOULDER": b"SS",
+  "ELBOW":    b"ES",
+  "WRIST":    b"WS",
+  "CLAW":     b"CS"
+}
 AUTO_STOP = 10      # Stop driving after 10 seconds if we don't get a new ros message
 ET_TIME = 10        # Arduino command mode expires after 10 seconds of UART silence
 NO_RESPONSE_MAX = 5 # If we get no response from the arduino after 5 tries, renter cmd mode
@@ -149,6 +156,12 @@ class PI_Command:
     self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["LW_SPEED"] + b" " + str(self.lw_speed).encode('utf-8') + b"\n")
     self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["RW_DIR"]   + b" " + str(self.rw_dir).encode('utf-8')   + b"\n")
     self.arduino.write(AT_CMD_PREFIX+DRIVE_CMDS["RW_SPEED"] + b" " + str(self.rw_speed).encode('utf-8') + b"\n")
+
+    self.arduino.write(AT_CMD_PREFIX+ARM_CMDS["TURRET"]   + b" " + str(self.arm.turret.angle).encode('utf-8')   + b"\n")
+    self.arduino.write(AT_CMD_PREFIX+ARM_CMDS["SHOULDER"] + b" " + str(self.arm.shoulder.angle).encode('utf-8') + b"\n")
+    self.arduino.write(AT_CMD_PREFIX+ARM_CMDS["ELBOW"]    + b" " + str(self.arm.elbow.angle).encode('utf-8')    + b"\n")
+    self.arduino.write(AT_CMD_PREFIX+ARM_CMDS["WRIST"]    + b" " + str(self.arm.wrist.angle).encode('utf-8')    + b"\n")
+    self.arduino.write(AT_CMD_PREFIX+ARM_CMDS["CLAW"]     + b" " + str(self.arm.claw.angle).encode('utf-8')     + b"\n")
     self.command_mode_time = time.time() # Keep track of how long its been since we last wrote
                                          # ... to the arduino
 

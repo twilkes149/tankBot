@@ -91,12 +91,12 @@ class PI_Command:
     for joint in self.arm.joints:
       if joint.state == FWD:
         joint.angle += 1
-        if join.angle > join.max:
-          joing.angle = joint.max
+        if joint.angle > joint.maxAngle:
+          joing.angle = joint.maxAngle
       elif joint.state == REV:
         joint.angle -= 1
-        if joint.angle < joint.min:
-          joint.angle = joint.min
+        if joint.angle < joint.minAngle:
+          joint.angle = joint.minAngle
   
   def arm_commands_callback(self, arm_msg):
     print(arm_msg);

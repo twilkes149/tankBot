@@ -92,7 +92,7 @@ class PI_Command:
       if joint.state == FWD:
         joint.angle += 1
         if joint.angle > joint.maxAngle:
-          joing.angle = joint.maxAngle
+          joint.angle = joint.maxAngle
       elif joint.state == REV:
         joint.angle -= 1
         if joint.angle < joint.minAngle:

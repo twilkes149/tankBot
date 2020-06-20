@@ -32,7 +32,7 @@ def write_to_arduino():
         with arduino_lock:            
             arduino_control.write_to_arduino()
             arduino_control.arm_tick()
-        time.sleep(.15)
+        time.sleep(.01)
 
 # Method for receiving socket messages
 @socketio.on('connected')

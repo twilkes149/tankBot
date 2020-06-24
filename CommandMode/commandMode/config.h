@@ -16,12 +16,17 @@ struct Config_t {
   int expireTime;
 
   // ******************** Tankbot Configuration **************************
-  // ********** ARM ************
-  int turretAngle;
-  int shoulderAngle;
-  int elbowAngle;
-  int wristAngle;
-  int clawAngle;
+  // ********** ARM ACTUAL **************
+  int shoulderAngle; // The actual angle (degrees) of the shoulder relative to the ground
+  int elbowAngle;    // The actual angle (degrees) of the elbow relative to the shoulder
+
+  // ********** ARM HARDWARE ************
+  // Actual values we write to the servos
+  int turretServoAngle;
+  int shoulderServoAngle;
+  int elbowServoAngle;
+  int wristServoAngle;
+  int clawServoAngle;
 
   // ******** WHEELS **********
   int lw_speed;
@@ -55,7 +60,7 @@ int command_exitCommandMode(void* param);
 
 // ********************************************** COMMAND TABLE ****************************************
 // Note: When adding an entry to the command table, COMMAND_TABLE_SIZE must also be updated
-#define COMMAND_TABLE_SIZE 14
+#define COMMAND_TABLE_SIZE 16
 static commandTableEntry commandTable[] = {
   #include "commandTable.h" // Command table is in this file for readability
 };

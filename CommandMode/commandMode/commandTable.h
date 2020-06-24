@@ -23,12 +23,17 @@ COMMAND_WRITE('E', 'T', 10000, 1000, 10001, getSetExpireTime, &config.expireTime
 COMMAND_EXE('C', 'N', command_exitCommandMode),
 
 // ************************************************************ TANKBOT COMMANDS *******************************************************************
-COMMAND_WRITE('T', 'A', 50, 0, 180, getSetTurretAngle, &config.turretAngle),
-COMMAND_WRITE('S', 'A', 50, 0, 180, getSetShoulderAngle, &config.shoulderAngle),
-COMMAND_WRITE('E', 'A', 90, 0, 180, getSetElbowAngle, &config.elbowAngle),
-COMMAND_WRITE('W', 'A', 110, 0, 180, getSetWristAngle, &config.wristAngle),
-COMMAND_WRITE('C', 'A', 30, 0, 180, getSetClawAngle, &config.clawAngle),
+// Arm joint angles
+COMMAND_WRITE('S', 'A', 116, 0, 107, getSetShoulderAngle, &config.shoulderAngle), // TODO, convert defaults
+COMMAND_WRITE('E', 'A', 118, 74, 239, getSetElbowAngle, &config.elbowAngle),     // TODO, convert defaults
 
+// Arm servo angles
+COMMAND_WRITE('T', 'S', 80, 0, 180, getSetTurretServoAngle, &config.turretServoAngle),
+COMMAND_WRITE('S', 'S', 0, 0, 180, getSetShoulderServoAngle, &config.shoulderServoAngle),
+COMMAND_WRITE('E', 'S', 132, 0, 180, getSetElbowServoAngle, &config.elbowServoAngle),
+COMMAND_WRITE('W', 'S', 158, 0, 180, getSetWristServoAngle, &config.wristServoAngle),
+COMMAND_WRITE('C', 'S', 30, 0, 180, getSetClawServoAngle, &config.clawServoAngle),
+// Drive
 COMMAND_WRITE('L', 'S', 0, 0, 100, getSetLeftSpeed, &config.lw_speed),
 COMMAND_WRITE('R', 'S', 0, 0, 100, getSetRightSpeed, &config.rw_speed),
 COMMAND_WRITE('L', 'D', 0, 0, 2, getSetLeftDir, &config.lw_dir),

@@ -4,6 +4,11 @@
 
 extern int config_getSetConfig(char c1, char c2, void* param);
 
+int getSetShoulderServoAngle(void* param);
+int getSetElbowServoAngle(void* param);
+int getSetShoulderAngle(void* param);
+int getSetElbowAngle(void* param);
+
 enum driveDir {
   FWD   = 0,
   REV   = 2,
@@ -73,26 +78,6 @@ void setRightDriveDir(int dir) {
   }
 }
 
-void setTurretAngle(int angle) {
-  turret_motor.write(angle);
-}
-
-void setShoulderAngle(int angle) {
-  shoulder_motor.write(angle);
-}
-
-void setElbowAngle(int angle) {
-  elbow_motor.write(angle);
-}
-
-void setWristAngle(int angle) {
-  wrist_motor.write(angle);
-}
-
-void setClawAngle(int angle) {
-  claw_motor.write(angle);
-}
-
 // ********************************* CONFIG FUNCTIONS **************************
 // ********************************* DRIVE FUNCTIONS ***************************
 int getSetLeftDir(void* param) {
@@ -140,24 +125,15 @@ int getSetLeftSpeed(void* param) {
 }
 
 // ******************************** ARM FUNCTIONS ******************************
-int getSetTurretAngle(void* param) {
-  if (param == NULL) {
-    return config.turretAngle;
-  } else {
-    int result = config_getSetConfig('T','A', param);
-    
-    setTurretAngle(config.turretAngle);
-    return result;
-  }
-}
-
 int getSetShoulderAngle(void* param) {
   if (param == NULL) {
     return config.shoulderAngle;
   } else {
     int result = config_getSetConfig('S','A', param);
     
-    setShoulderAngle(config.shoulderAngle);
+    config.shoulderServoAngle = mapShoulderAngleToShoulderServo(config.shoulderAngle);
+    shoulder_motor.write(config.shoulderServoAngle);    
+    
     return result;
   }
 }
@@ -167,30 +143,67 @@ int getSetElbowAngle(void* param) {
     return config.elbowAngle;
   } else {
     int result = config_getSetConfig('E','A', param);
+
+    config.elbowServoAngle = mapElbowAngleToElbowServo(config.elbowAngle);
+    elbow_motor.write(config.elbowServoAngle);    
     
-    setElbowAngle(config.elbowAngle);
     return result;
   }
 }
 
-int getSetWristAngle(void* param) {
+int getSetTurretServoAngle(void* param) {
   if (param == NULL) {
-    return config.wristAngle;
+    return config.turretServoAngle;
   } else {
-    int result = config_getSetConfig('W','A', param);
+    int result = config_getSetConfig('T','S', param);
     
-    setWristAngle(config.wristAngle);
+    turret_motor.write(config.turretServoAngle);
     return result;
   }
 }
 
-int getSetClawAngle(void* param) {
+int getSetShoulderServoAngle(void* param) {
   if (param == NULL) {
-    return config.clawAngle;
+    return config.shoulderServoAngle;
   } else {
-    int result = config_getSetConfig('C','A', param);
-    
-    setClawAngle(config.clawAngle);
+    int result = config_getSetConfig('S','S', param);
+
+    config.shoulderAngle = mapShoulderServoToShoulderAngle(config.shoulderServoAngle);
+    shoulder_motor.write(config.shoulderServoAngle);    
+    return result;
+  }
+}
+
+int getSetElbowServoAngle(void* param) {
+  if (param == NULL) {
+    return config.elbowServoAngle;
+  } else {
+    int result = config_getSetConfig('E','S', param);
+
+    config.elbowAngle = mapElbowServoToElbowAngle(config.elbowServoAngle);
+    elbow_motor.write(config.elbowServoAngle);    
+    return result;
+  }
+}
+
+int getSetWristServoAngle(void* param) {
+  if (param == NULL) {
+    return config.wristServoAngle;
+  } else {
+    int result = config_getSetConfig('W','S', param);
+        
+    wrist_motor.write(config.wristServoAngle);
+    return result;
+  }
+}
+
+int getSetClawServoAngle(void* param) {
+  if (param == NULL) {
+    return config.clawServoAngle;
+  } else {
+    int result = config_getSetConfig('C','S', param);
+        
+    claw_motor.write(config.clawServoAngle);
     return result;
   }
 }

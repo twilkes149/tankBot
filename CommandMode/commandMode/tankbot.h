@@ -125,6 +125,14 @@ int getSetLeftSpeed(void* param) {
 }
 
 // ******************************** ARM FUNCTIONS ******************************
+int getArmX(void* param) {
+  return config.armX;
+}
+
+int getArmY(void* param) {
+  return config.armY;
+}
+
 int getSetShoulderAngle(void* param) {
   if (param == NULL) {
     return config.shoulderAngle;
@@ -133,7 +141,7 @@ int getSetShoulderAngle(void* param) {
     
     config.shoulderServoAngle = mapShoulderAngleToShoulderServo(config.shoulderAngle);
     shoulder_motor.write(config.shoulderServoAngle);    
-    
+    updateXY();
     return result;
   }
 }
@@ -146,7 +154,7 @@ int getSetElbowAngle(void* param) {
 
     config.elbowServoAngle = mapElbowAngleToElbowServo(config.elbowAngle);
     elbow_motor.write(config.elbowServoAngle);    
-    
+    updateXY();
     return result;
   }
 }
@@ -169,7 +177,8 @@ int getSetShoulderServoAngle(void* param) {
     int result = config_getSetConfig('S','S', param);
 
     config.shoulderAngle = mapShoulderServoToShoulderAngle(config.shoulderServoAngle);
-    shoulder_motor.write(config.shoulderServoAngle);    
+    shoulder_motor.write(config.shoulderServoAngle); 
+    updateXY();   
     return result;
   }
 }
@@ -181,7 +190,8 @@ int getSetElbowServoAngle(void* param) {
     int result = config_getSetConfig('E','S', param);
 
     config.elbowAngle = mapElbowServoToElbowAngle(config.elbowServoAngle);
-    elbow_motor.write(config.elbowServoAngle);    
+    elbow_motor.write(config.elbowServoAngle);
+    updateXY();
     return result;
   }
 }

@@ -28,16 +28,25 @@ vs = VideoStream(src=0).start()
 time.sleep(2.0)
 
 def write_to_arduino():
-    while True:
-        with arduino_lock:            
+    counter = 0
+    TICK_FREQ = 4
+    TICK_PERIOD = .01
+
+    while True: # While loop "ticks every ms"
+        if counter > TICK_FREQ:
+            with arduino_lock:
+                arduino_control.tank_tick()
+            counter = 0
+        with arduino_lock:
             arduino_control.write_to_arduino()
-            arduino_control.arm_tick()
-        time.sleep(.01)
+
+        time.sleep(TICK_PERIOD)
+        counter += 1
 
 # Method for receiving socket messages
 @socketio.on('connected')
 def connected(json):
-    print(json['data'])    
+    print(json['data'])
 
 @socketio.on('shutdown')
 def shutdown(message):
@@ -45,14 +54,14 @@ def shutdown(message):
     os.system("sudo shutdown -h now")
 
 @socketio.on('drive')
-def drive_callback(json):    
-    with arduino_lock:
-        arduino_control.drive_commands_callback(json['data'])
+def drive_callback(json):
+    #with arduino_lock:
+    arduino_control.drive_commands_callback(json['data'])
 
 @socketio.on('arm')
 def arm_callback(json):
-    with arduino_lock:
-        arduino_control.arm_commands_callback(json['data'])
+    #with arduino_lock:
+    arduino_control.arm_commands_callback(json['data'])
 
 @app.route("/")
 def index():
@@ -93,6 +102,7 @@ def start_socket_server():
     socketio.run(app)
 
 if __name__ == "__main__":
+    print("Parsing args")
     ap = argparse.ArgumentParser()
     ap.add_argument("-i", "--ip", type=str, required=True, help="ip address of the device")
     ap.add_argument("-o", "--port", type=int, required=True, help="port number of the server")
@@ -102,13 +112,13 @@ if __name__ == "__main__":
     arduino.daemon = True
     arduino.start()
 
-    t = threading.Thread(target=stream)
-    t.daemon = True
-    t.start()
+    video_stream = threading.Thread(target=stream)
+    video_stream.daemon = True
+    video_stream.start()
 
-    p = threading.Thread(target=start_socket_server)
-    p.daemon = True
-    p.start()
+    socket_server = threading.Thread(target=start_socket_server)
+    socket_server.daemon = True
+    socket_server.start()
 
     app.run(host=args["ip"], port=args["port"], debug=True, threaded=True, use_reloader=False)
 

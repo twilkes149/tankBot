@@ -27,6 +27,8 @@ struct Config_t {
   int elbowServoAngle;
   int wristServoAngle;
   int clawServoAngle;
+  int armX;
+  int armY;
 
   // ******** WHEELS **********
   int lw_speed;
@@ -60,7 +62,7 @@ int command_exitCommandMode(void* param);
 
 // ********************************************** COMMAND TABLE ****************************************
 // Note: When adding an entry to the command table, COMMAND_TABLE_SIZE must also be updated
-#define COMMAND_TABLE_SIZE 16
+#define COMMAND_TABLE_SIZE 18
 static commandTableEntry commandTable[] = {
   #include "commandTable.h" // Command table is in this file for readability
 };

@@ -1,4 +1,4 @@
-//#define COMMAND_DEBUG
+#define COMMAND_DEBUG
 #include "command.h"
 #include "config.h"
 #include"globals.h"

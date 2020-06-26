@@ -33,6 +33,8 @@ COMMAND_WRITE('S', 'S', 0, 0, 180, getSetShoulderServoAngle, &config.shoulderSer
 COMMAND_WRITE('E', 'S', 132, 0, 180, getSetElbowServoAngle, &config.elbowServoAngle),
 COMMAND_WRITE('W', 'S', 158, 0, 180, getSetWristServoAngle, &config.wristServoAngle),
 COMMAND_WRITE('C', 'S', 30, 0, 180, getSetClawServoAngle, &config.clawServoAngle),
+COMMAND_READ('A', 'X', 0, getArmX, &config.armX),
+COMMAND_READ('A', 'Y', 0, getArmY, &config.armY),
 // Drive
 COMMAND_WRITE('L', 'S', 0, 0, 100, getSetLeftSpeed, &config.lw_speed),
 COMMAND_WRITE('R', 'S', 0, 0, 100, getSetRightSpeed, &config.rw_speed),

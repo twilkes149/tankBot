@@ -100,6 +100,13 @@ void tankbot_hardwareInit() {
   //    \______________/
   //--------------------------------------------------------------
 }
+
+// Function to update the estimate x,y position of the edndefector based on the shoulder & elbow angles
+void updateXY() {
+  config.armX = SHOULDER_LEN * cos(radians(config.shoulderAngle)) + ELBOW_LEN * cos(radians(abs(180 - config.shoulderAngle - config.elbowAngle)));
+  config.armY = SHOULDER_LEN * sin(radians(config.shoulderAngle)) + ELBOW_LEN * sin(radians(abs(180 - config.shoulderAngle - config.elbowAngle)));  
+}
+
 // Maps the value we write to the shouder servo to degrees of the shoulder relative to the ground
 int mapShoulderServoToShoulderAngle(int shoulderServo) {
   return map(shoulderServo, SHOULDER_UPPER_LIMIT, SHOULDER_LOWER_LIMIT, SHOULDER_ANGLE_MIN, SHOULDER_ANGLE_MAX);

@@ -2,6 +2,23 @@ import serial
 import time
 import sys
 
+"""
+New architecture:
+  Arduino
+    1. Accepts joint angles from PI
+    2. Converts joint angle to servo angle
+    3. Writes servo angles to the servo motors
+    4. Can read joint angles
+  Pi
+    1. Accepts x,y coordinates from webpage
+    2. Calculates joint angles from x,y coordinates
+    3. Communicates joint angles to arduino
+  Web page
+    Knows joint angles
+    "Draws" the arm on the screen
+    Point and click / drag the endefector of the arm
+"""
+
 ENTER_COMMAND_MODE = b'+++'
 AT_CMD_PREFIX = b'AT'
 DRIVE_CMDS = {        # Maps constants with their AT command values

@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<title>TankBot Video Stream</title>
+		<script type="text/javascript" src="static/processing.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
 		<script type="text/javascript" charset="utf-8">
 			var socket = io();
@@ -29,10 +30,10 @@
 		  const RIGHT_FWD  = {lw: 3, rw: 2};
 		  const RIGHT_REV  = {lw: 3, rw: 0};
 		  const RIGHT_STOP = {lw: 3, rw: 1};
-		  var ARM_DATA     = {turret: prev, 
-		  										shoulder: prev, 
-		  										elbow: prev, 
-		  										wrist: prev, 
+		  var ARM_DATA     = {turret: prev,
+		  										shoulder: prev,
+		  										elbow: prev,
+		  										wrist: prev,
 		  										claw: prev
 		  									};
 
@@ -150,7 +151,7 @@
 		  	socket.emit("arm", {data: arm});
 		  	console.log("Published claw_stop", arm);
 		  }
-		  
+
 		  // ********************************** DRIVE FUNCTIONS ************************
 		  function send_forward() {
 		    socket.emit("drive", {data: FWD});
@@ -210,7 +211,7 @@
 		  var keyPressed = {};
 
 		  // When a key is pressed, we want to tell the motor to go fwd or rev
-		  document.onkeydown = (event) => {    
+		  document.onkeydown = (event) => {
 		    // Only register the key on the first press event
 		    if (keyPressed[event.keyCode]) {
 		      return;
@@ -271,7 +272,7 @@
 		      	send_right_fwd();
 		      break;
 
-		      case 76: // l 
+		      case 76: // l
 		      	send_right_rev();
 		      break;
 
@@ -346,7 +347,7 @@
 		      	send_right_stop();
 		      break;
 
-		      case 76: // l 
+		      case 76: // l
 		      	send_right_stop();
 		      break;
 
@@ -379,7 +380,7 @@
 		    border-radios: 5px;
 		    margin: auto;
 		  }
-		  
+
 		  h2 {
 		    text-align: center;
 		  }
@@ -395,54 +396,31 @@
 	</head>
 
 	<body>
+		<canvas class="center" data-processing-sources="/static/tankBot/tankBot.pde /static/tankBot/Arm.pde /static/tankBot/Segment.pde"></canvas>
+		<!--
 		<div class="center">
-			<h1 class="center"	>Tankbot control</h1>
+			<h1 class="center">Tankbot control</h1>
 			<img src="{{ url_for('video_feed') }}">
-		</div>
-		
-		<div>
-	    <table>
-	      <tr>
-	        <td>
-	          <h2> Drive control</h2>
-	          <p>Keyboard controls (tankdrive):<br><br>
-	          	ARM Controls
-              Z - turret ccw<br>
-              X - turret cw<br>
-              A - Shoulder down<br>
-              S - Shoulder up<br>
-              Q - Elbow down<br>
-              W - Elbow up<br>
-              C - Wrist down<br>
-              V - Wrist up<br>
-              D - Claw close<br>
-              F - Claw Open<br><br>
-              DRIVE Controls<br>
-              I - Left wheel fwd<br>
-              K - Left wheel rev<br>
-              O - Right wheel fwd<br>
-              L - Right wheel rev<br>
-	          </p>
-	          <table>
-	            <tr>
-	              <td>
-	                <button onmousedown="send_forward()" onmouseup="send_stop()" onmouseout="send_stop()">FWD</button>
-	              </td>
-	              <td><button onmousedown="send_right()" onmouseup="send_stop()" onmouseout="send_stop()">RIGHT</button></td>
-	            </tr>
+		</div> -->
 
-	            <tr>
-	              <td>
-	                <button onmousedown="send_rev()" onmouseup="send_stop()" onmouseout="send_stop()">REV</button>
-	              </td>
-	              <td><button onmousedown="send_left()" onmouseup="send_stop()" onmouseout="send_stop()">LEFT </button></td>
-	            </tr>
-	          </table>
-	        </td>
-	      </tr>
-	    </table>
+		<div>
+      <table>
+        <tr>
+          <td>
+            <button onmousedown="send_forward()" onmouseup="send_stop()" onmouseout="send_stop()">FWD</button>
+          </td>
+          <td><button onmousedown="send_right()" onmouseup="send_stop()" onmouseout="send_stop()">RIGHT</button></td>
+        </tr>
+
+        <tr>
+          <td>
+            <button onmousedown="send_rev()" onmouseup="send_stop()" onmouseout="send_stop()">REV</button>
+          </td>
+          <td><button onmousedown="send_left()" onmouseup="send_stop()" onmouseout="send_stop()">LEFT </button></td>
+        </tr>
+      </table>
 	  </div>
-  
+
 	  <div>
 	    <button onclick="send_shutdown()">Shutdown</button>
 	  </div>

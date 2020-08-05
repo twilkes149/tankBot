@@ -4,7 +4,7 @@ class Arm {
   private WristSegment wrist;
   
   private float shoulderA, elbowA;
-  private float wristA = 30;
+  private float wristA = 90;
   private int l1, l2, l3;
   
   Arm (int l1_, int l2_, int l3_) {

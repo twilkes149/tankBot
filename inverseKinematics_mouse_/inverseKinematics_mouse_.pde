@@ -38,9 +38,15 @@ void draw() {
       float q2 = acos((sq(a.getShoulderLen()) - sq(a.getElbowLen())+sq(mouseDistance))/(2*a.getShoulderLen()*mouseDistance));
       float t2 = acos((sq(a.getShoulderLen()) + sq(a.getElbowLen()) - sq(mouseDistance))/(2*a.getShoulderLen()*a.getElbowLen()));
       
-      a.setShoulderAngle(-1*(q1+q2));
-      a.setElbowAngle(-1*t2);
-      a.setWristAngle(3*PI/4);
+      float shoulderAngle = -1*(q1+q2);
+      float elbowAngle = -1*t2; 
+      float desiredWristOrientation = PI/6;
+      
+      a.setShoulderAngle(shoulderAngle);
+      a.setElbowAngle(elbowAngle);
+      
+      float wristA = (PI + desiredWristOrientation) - (PI - shoulderAngle - elbowAngle);
+      a.setWristAngle(wristA);
     }
   }
   

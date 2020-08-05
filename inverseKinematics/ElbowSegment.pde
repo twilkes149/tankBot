@@ -2,7 +2,7 @@ class ElbowSegment {
   PVector a;
   float angle;
   float len;
-  PVector b;
+  PVector b;  
  
   ElbowSegment (float x, float y, float len_, float angle_) {
     a = new PVector(x,y);

@@ -6,18 +6,24 @@ long cmdModeTime = 0;
 final long ET_TIME = 10000; // We are in command mode for 10 seconds 
 final int GT_TIME = 1000; // Time to wait before entering +++
 
+final int TURRET_MIN = 0;
+final int TURRET_MAX = 180;
+int TURRET = 80;
 final int SHOULDER_MIN = 0;
-int SHOULDER = 50;
-final int SHOULDER_MAX = 100;
+int SHOULDER = 0;
+final int SHOULDER_MAX = 130;
 final int ELBOW_MIN = 0;
-int ELBOW = 50;
-final int ELBOW_MAX = 100;
+int ELBOW = 132;
+final int ELBOW_MAX = 180;
 final int WRIST_MIN = 0;
-int WRIST = 110;
+int WRIST = 158;
 final int WRIST_MAX = 180;
 final int CLAW_MIN = 10;
 int CLAW = 30;
 final int CLAW_MAX = 80;
+
+int ARM_X = 15;
+int ARM_Y = 136;
 
 int LEFT_DIR = 0;
 int RIGHT_DIR = 1;
@@ -48,10 +54,11 @@ void draw() {
   }
   
   // Send the parameters to the tank
-  arduinoPort.write("atsa " + SHOULDER + "\n");
-  arduinoPort.write("atea " + ELBOW + "\n");
-  arduinoPort.write("atwa " + WRIST + "\n");
-  arduinoPort.write("atca " + CLAW + "\n");
+  arduinoPort.write("atts " + TURRET + "\n");
+  arduinoPort.write("atss " + SHOULDER + "\n");
+  arduinoPort.write("ates " + ELBOW + "\n");
+  arduinoPort.write("atws " + WRIST + "\n");
+  arduinoPort.write("atcs " + CLAW + "\n");
   
   // If we send a parameter, then the command mode timer is updated
   cmdModeTime = millis();
@@ -79,6 +86,7 @@ void keyReleased() {
     case 38:
     case 39:
     case 40:
+      System.out.println("Stop Motors_");
       stop_motors();
     break;
   }
@@ -87,64 +95,82 @@ void keyReleased() {
 void keyPressed() {
   
   switch (key) {
+    case 'd':
+    case 'D':      
+      TURRET += 1;
+      if (TURRET > TURRET_MAX) {
+        TURRET = TURRET_MAX;
+      }
+      System.out.println("Turret ccw: " + TURRET);
+    break;
+    
+    case 'f':
+    case 'F':            
+      TURRET -= 1;
+      if (TURRET < TURRET_MIN) {
+        TURRET = TURRET_MIN;
+      }
+      System.out.println("Turret cw: " + TURRET);
+    break;
+    
     case 'x':
-    case 'X':
-      System.out.println("Shoulder up");
-      
+    case 'X':            
       SHOULDER += 1;
       if (SHOULDER > SHOULDER_MAX) {
         SHOULDER = SHOULDER_MAX;
       }
+      
+      System.out.println("Shoulder up: " + SHOULDER);
     break;
     
     case 'z':
-    case 'Z':
-      System.out.println("Shoulder down");
-      
+    case 'Z':            
       SHOULDER -= 1;
       if (SHOULDER < SHOULDER_MIN) {
         SHOULDER = SHOULDER_MIN;
       }
+      
+      System.out.println("Shoulder down: " + SHOULDER);
     break;
     
     case 's':
-    case 'S':
-      System.out.println("Elbow up");
-      
+    case 'S':            
       ELBOW += 1;
       if (ELBOW > ELBOW_MAX) {
         ELBOW = ELBOW_MAX;
       }
+      
+      System.out.println("Elbow up: " + ELBOW);
     break;
     
     case 'a':
-    case 'A':
-      System.out.println("Elbow down");
-      
+    case 'A':            
       ELBOW -= 1;
       if (ELBOW < ELBOW_MIN) {
         ELBOW = ELBOW_MIN;
       }
+      
+      System.out.println("Elbow down: " + ELBOW);
     break;
     
     case 'w':
-    case 'W':
-      System.out.println("Wrist up");
-      
+    case 'W':            
       WRIST += 1;
       if (WRIST > WRIST_MAX) {
         WRIST = WRIST_MAX;
       }
+      
+      System.out.println("Wrist up: " + WRIST);
     break;
     
     case 'q':
-    case 'Q':
-      System.out.println("Wrist down");
-      
+    case 'Q':            
       WRIST -= 1;
       if (WRIST < WRIST_MIN) {
         WRIST = WRIST_MIN;
       }
+      
+      System.out.println("Wrist down: " + WRIST);
     break;
     
     case 'c':
@@ -170,42 +196,31 @@ void keyPressed() {
     default:
       // We use the arrow keys for driving the wheels
       // ... and those values are retrieved from keyCode
+      final String speed = "70";
       switch (keyCode) {
         
         case 38:
-          System.out.println("Drive forward");
+          System.out.println("Arm up: " + ARM_Y);
           
-          arduinoPort.write("atld 0\n");
-          arduinoPort.write("atrd 1\n");
-          arduinoPort.write("atls 150\n");
-          arduinoPort.write("atrs 150\n");
+          ARM_Y++;
         break;
         
         case 40:
-          System.out.println("Drive backward");
+          System.out.println("Arm down: " + ARM_Y);
           
-          arduinoPort.write("atld 1\n");
-          arduinoPort.write("atrd 0\n");
-          arduinoPort.write("atls 150\n");
-          arduinoPort.write("atrs 150\n");
+          ARM_Y--;
         break;
         
         case 37:
-          System.out.println("Turn left");
+          System.out.println("Arm backward: " + ARM_X);
           
-          arduinoPort.write("atld 0\n");
-          arduinoPort.write("atrd 0\n");
-          arduinoPort.write("atls 150\n");
-          arduinoPort.write("atrs 150\n");
+          ARM_X--;
         break;
         
         case 39:
-          System.out.println("Turn right");
+          System.out.println("Arm forward: " + ARM_X);
           
-          arduinoPort.write("atld 1\n");
-          arduinoPort.write("atrd 1\n");
-          arduinoPort.write("atls 150\n");
-          arduinoPort.write("atrs 150\n");
+          ARM_X++;
         break;
         
         

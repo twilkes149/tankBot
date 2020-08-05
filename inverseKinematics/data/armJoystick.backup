@@ -3,5 +3,3 @@ X-AXIS	Arm X	3	SLIDER	Y Axis	0	1.0	0.0
 Y-AXIS	Arm Y	3	SLIDER	X Axis	0	1.0	0.0
 Z-AXIS	Arm Wrist	3	SLIDER	Z Axis	0	1.0	0.0
 MOVE	Enables the arm movement	1	BUTTON	Button 0	0	0.0	0.0
-OPEN	Opens the claw	1	BUTTON	Button 1	0	0.0	0.0
-CLOSE	Closes the claw	1	BUTTON	Button 3	0	0.0	0.0

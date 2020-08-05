@@ -7,6 +7,17 @@ class Arm {
   private float wristA = 30;
   private int l1, l2, l3;
   
+  //define max angles
+  private final float SHOULDER_MAX = 130;
+  private final float SHOULDER_MIN = 0;
+  
+  //define max angles
+  private final float ELBOW_MAX = 180;
+  private final float ELBOW_MIN = 45;
+  
+  private final float WRIST_MAX = 90;
+  private final float WRIST_MIN = 270;
+  
   Arm (int l1_, int l2_, int l3_) {
     l1 = l1_;
     l2 = l2_;
@@ -24,7 +35,7 @@ class Arm {
     elbow.setStart(shoulder.getEnd().x,shoulder.getEnd().y);
     wrist.setStart(elbow.getEnd().x, elbow.getEnd().y);
     
-    System.out.println("end: " + wrist.getEnd().x + "," + wrist.getEnd().y + "elbow end: " + elbow.getEnd().x + " , " + elbow.getEnd().y);
+    //System.out.println("end: " + wrist.getEnd().x + "," + wrist.getEnd().y + "elbow end: " + elbow.getEnd().x + " , " + elbow.getEnd().y);
     
     shoulder.show();
     elbow.show();
@@ -48,13 +59,13 @@ class Arm {
     shoulderA = a;
   }
   
-  void setElbowAngle(float B) {
+  void setElbowAngle(float B) {    
     elbowA = PI - (B + shoulderA);
-    elbow.setAngle(elbowA);
+    elbow.setAngle(elbowA);    
   }
   
-  void setWristAngle(float a) {
+  void setWristAngle(float a) { 
     wristA = PI - (a + elbowA);
-    wrist.setAngle(-1*wristA);
+    wrist.setAngle(-1*wristA);    
   }
 }

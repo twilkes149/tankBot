@@ -1,0 +1,45 @@
+# Components
+- Arduino running command mode
+- RaspberryPi
+  - command mode control
+  - socket server
+  - video processing & streaming module
+- Client program
+  - Drive controls
+    - drive
+    - arm
+      - joint control
+      - IK control
+  - Image display
+
+  # Software modules
+  - RaspberryPi server
+    - socket
+      - startServer
+      - readData
+      - dataAvailable
+      - sendData
+      - sendVideoData
+      - stopServer
+    - Arduino Control
+      Tracks x,y position of endefector and angle of each joint
+      - setMotorSpeed
+      - setMotorDir
+      - setJointAngle
+      - setEndCoord
+      - defaultPos
+      - getArmStatus
+      - getDriveStatus
+      * writeToArduino
+        Only writes a value to arduino if a value changes
+      * enterCmdMode
+      * calcIK
+    - videoModule
+      - startVideo
+      - readVideo
+      - stopVideo
+  - Client Program
+    - DisplayVideo
+    - UI
+      - registerArmStatusCallback
+      - registerDriveStatusCallback

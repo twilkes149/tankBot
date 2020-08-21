@@ -1,2 +1,4 @@
 *.mpg
 CAD/
+PiCode/out/
+PiCode/.vs/

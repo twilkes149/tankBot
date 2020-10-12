@@ -49,7 +49,7 @@ void command_print_variable(int var) {
   // So the biggest config value we can ever have is 0x7FFF  
   if (mIS_ASCII_COMMAND(var)) {    
     Serial.write(mASCII_TO_INT(var));
-    Serial.print('\r');
+    Serial.print('\n');
   } else {
     Serial.println(var);
   }
@@ -81,7 +81,7 @@ void command_tick() {
       if (commandChars >= 3) {
         commandChars = 0;
         state = COMMAND_MODE_CHAR;
-        Serial.write("OK\r");
+        Serial.write("OK\n");
 
         // Set a timer for exiting command mode after the expire time
         // ... save the timer ID for later when updating the timer
@@ -186,7 +186,7 @@ void command_tick() {
           index++;
         } else {
           index = 0;
-          Serial.print("ERROR\r");
+          Serial.print("ERROR\n");
           state = COMMAND_MODE_CHAR;
         }
       }
@@ -201,11 +201,11 @@ void command_tick() {
 
       switch (result) {
           case COMMAND_SET: // we just set/ran the command
-            Serial.print("OK\r");
+            Serial.print("OK\n");
           break;
 
           case COMMAND_ERROR: // There was an error reading/setting the command
-            Serial.print("ERROR\r");
+            Serial.print("ERROR\n");
           break;
 
           default: // Reading the command

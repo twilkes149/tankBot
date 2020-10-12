@@ -2,6 +2,7 @@
 #include <iostream>
 
 namespace tankbot {
+
   TCPServer::TCPServer(const char* port)
   : listenSocket(INVALID_SOCKET),
     result(0),

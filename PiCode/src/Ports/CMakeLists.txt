@@ -2,7 +2,7 @@
 
 if (WIN32)
   # Create library for the TCP server
-  add_library(tcp_server "Windows/TCPServer.cpp")
+  add_library(tcp_server STATIC "Windows/TCPServer.cpp")
   # Create library for the TCP client
   add_library(tcp_client "Windows/TCPClient.cpp")
   

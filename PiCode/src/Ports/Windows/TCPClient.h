@@ -49,7 +49,7 @@ namespace tankbot {
       *
       * \return If successful it will return the number of bytes received > 0
       *         on a failure it will return an error code that is < 0
-      *         {TIMEOUT, UNKNOWN_ERROR, SUCCESS}
+      *         {NO_DATA_AVAILABLE, UNKNOWN_ERROR, SUCCESS}
       */
       int receiveData(char* recData, int maxLength, int flags);
 

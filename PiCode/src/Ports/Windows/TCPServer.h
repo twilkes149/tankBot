@@ -23,9 +23,7 @@ namespace tankbot {
       bool clientConnected;      
 
     public:
-      TCPServer() = delete;
-
-      TCPServer(const char* port);
+      TCPServer(const char* port = "8080");
 
       /**
       * \brief inits the socket and starts listening

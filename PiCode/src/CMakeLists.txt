@@ -1,32 +1,45 @@
-#/PiCode/src
-add_subdirectory("Ports")
-
-if( ${BUILD_SERVER} )
-  add_executable (tankbotServer "TankbotServer/TankbotServer.cpp")
-endif( ${BUILD_SERVER} )
-
-if( ${BUILD_CLIENT} )
-  add_executable (tankbotClient "TankbotClient/TankbotClient.cpp")
-endif( ${BUILD_CLIENT} )
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories("Ports")
-
-if (WIN32)
-  include_directories("Ports/Windows")
+if(WIN32)
+  add_compile_definitions("WINDOWS")
 endif(WIN32)
 
-if (UNIX)
-  include_directories("Ports/RPi")
+if(UNIX)
+  add_compile_definitions("LINUX")
 endif(UNIX)
 
+add_library(server "Ports/Windows/TCPServer.cpp" 
+                   "commonTypes.cpp"
+                   )
 
-if ( ${BUILD_SERVER} )
-  # Link to the tcp created libraries and the opencv libraries
-  target_link_libraries (tankbotServer LINK_PUBLIC tcp_server ${OpenCV_LIBS})
-endif ( ${BUILD_SERVER} )
+add_library(client "Ports/Windows/TCPClient.cpp" 
+                   "commonTypes.cpp" 
+                   "Ports/Windows/Keyboard.cpp" 
+                   "ThreadSafeVar.cpp" 
+                   "Client/ScreenControl.cpp"
+                   )
 
-if( ${BUILD_CLIENT} )
-  # Link to the tcp created libraries and the opencv libraries
-  target_link_libraries (tankbotClient LINK_PUBLIC tcp_client ${OpenCV_LIBS})
-endif( ${BUILD_CLIENT} )
+add_library(comms "${CMAKE_CURRENT_SOURCE_DIR}/Comms.cpp" 
+                  "commonTypes.cpp" 
+                  "Arduino.cpp" 
+                  "Ports/Windows/Serial.cpp"
+                  )
+
+target_include_directories(server PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+
+target_include_directories(client PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(client PUBLIC "Ports/Windows")
+target_include_directories(client PUBLIC "Client")
+
+target_include_directories(comms PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(comms PUBLIC "Ports/Windows")
+
+target_link_libraries(comms LINK_PUBLIC server)
+
+# Building server code
+add_executable(tankbot_server "TankbotServer/TankbotServer.cpp")
+target_link_libraries(tankbot_server LINK_PUBLIC server)
+target_link_libraries(tankbot_server LINK_PUBLIC comms)
+
+# Building client code
+add_executable(tankbot_client "TankbotClient/TankbotClient.cpp")
+target_link_libraries(tankbot_client LINK_PUBLIC client)
+

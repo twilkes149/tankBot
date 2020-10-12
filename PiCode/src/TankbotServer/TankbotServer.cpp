@@ -2,39 +2,60 @@
 //
 #include <iostream>
 #include "TCPServer.h"
+#include "commonTypes.h"
+#include "Comms.h"
+#include "Arduino.h"
 
 int main()
 {
-  tankbot::TCPServer server("8080\0");
-  int result = server.init();
+  tankbot::Comms::init("8080");
+  tankbot::Arduino arduino;
 
-  if (result == tankbot::Socket::INIT_FAILURE) {
-    std::cout << "init failed" << std::endl;
+  // Init the arduino
+  std::cout << "Init Arduino... ";
+  int arduinoStatus = arduino.init("\\\\.\\COM22");
+  if (arduinoStatus == tankbot::Arduino::CMD_MODE_FAIL) {
+    std::cout << "Failed to enter cmd mode" << std::endl;
+    return 1;
+  } else if (arduinoStatus != tankbot::Arduino::SUCCESS) {
+    std::cout << "Failed with status code: " << arduinoStatus << std::endl;
     return 1;
   }
+  std::cout << "Success" << std::endl << " Initial Arm state: " << arduino.getCurrArmState() << std::endl;
 
-  result = server.waitForClient(100, 10000);
-  if (result == tankbot::Socket::TIMEOUT) {
-    std::cout << "timed out" << std::endl;
-  } else {
-    std::cout << "client connected" << std::endl;
+
+  bool printedStatus = false;
+  while (true) {
+    int status = tankbot::Comms::tick();
+    if (status == tankbot::Comms::WAITING_FOR_CLIENT) {
+      if (!printedStatus) {
+        printedStatus = true;
+        std::cout << "Waiting for client...";
+      }
+      Sleep(100);
+      continue;
+    } else if (printedStatus) {
+      printedStatus = false;
+      std::cout << "Connected" << std::endl;
+    }
+
+    arduino.tick();
+
+    
+    /*if (status == tankbot::Comms::WAITING_FOR_CLIENT) {
+      std::cout << "Waiting for client..." << std::endl;
+      Sleep(100);
+    }
+    else if (tankbot::Comms::armAvailable()) {
+      tankbot::arm_t armData = tankbot::Comms::readArmBuffer();
+      std::cout << i++ << ": Arm: " << armData << std::endl;
+    }
+    else if (tankbot::Comms::driveAvailable()) {
+      tankbot::drive_t driveData = tankbot::Comms::readDriveBuffer();
+      std::cout << ": Drive: " << driveData << std::endl;
+    }*/
   }
-  // send data
-  server.sendData("hello\0", 6);
 
-  // wait for response
-  char buffer[50] = { 0 };
-  // wait 10 seconds for data
-  int status = server.receiveData(buffer, 50, 10000, 0);
-  if (status == tankbot::Socket::TIMEOUT) {
-    std::cout << "received timed out" << std::endl;
-  } else if (status == tankbot::Socket::UNKNOWN_ERROR) {
-    std::cout << "unknown receive error" << std::endl;
-  } else {
-    std::cout << "received data: " << buffer << std::endl;
-  }
-
-  server.closeSocket();
 
 	return 0;
 }

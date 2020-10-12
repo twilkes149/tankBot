@@ -43,3 +43,222 @@
     - UI
       - registerArmStatusCallback
       - registerDriveStatusCallback
+    - Socker
+      - sendData
+      - getVideoData
+      - getData
+      - videoAvailable
+      - dataAvailable
+      - connect
+      - close
+
+## Pi Classes
+Socket
+- used for communication
+
+Comms
+- handles TCP communication
+- arm buffer
+- drive buffer
+- arm feedback buffer
+- drive feedback buffer
+- consts for data types:
+  - ARM
+  - DRIVE
+- list of subscribed functions
+
+while true:
+  if data available:
+    read data into buffer
+
+    if data[0] == ARM
+      armQ.push(data)
+      call subscribers functions to notify them of data
+    else if data[0] = DRIVE
+      driveQ.push(data)
+      call subscribers functions to notify them of data
+  if time to write data
+    write data from arm feedback
+    write data from drive feedback
+
+Keyboard
+- array to keep track of key states
+- operator& (const int num)
+
+while true:
+  array = getKeyState
+
+Arduino
+- used to write data to the arduino
+- subscribes to Comms{ARM, DRIVE}
+- curr state for arm/drive
+- next state for arm/drive
+
+while true:
+  if Comms ARM data available
+    armNextState = Comms::readArmData()
+  for each joint in armNextState:
+    if joint.angle != currState.joint.angle
+      currState.join.angle = join.angle
+      write(currState.joint.angle)
+
+  Comms::writeState(currArmState)
+
+  //similar strategy for drive
+
+ThreadSafeVariable
+  // This class wraps read/writting of a variable in mutex locks and unlocks
+  // to protect against race conditions when used in a multithreading environment
+
+  private:
+    Mutex m_;
+    variable var_;
+
+  public:
+    write(variable newVar)
+      m_.lock()
+      var_ = newVar
+      m_.unlock()
+
+    read()
+      m_.lock()
+      variable result = var_
+      m_.unlock()
+      return result
+
+  private:
+    operator=
+    operator==
+    operator!=
+
+
+Client side SM
+screen control:
+  tankbotModel
+  tankbotActual
+  controlMutex
+  state = WRITTING : {IDLE, WRITTING}
+
+  // function to clear the screen
+  clearScreen()
+
+  // function to print the model and actual data to the screen
+  printData()
+
+  main loop:
+    controlMutex.lock()
+    if state == WRITTING
+      clearScreen()
+      printData()
+      state = IDLE
+    controlMutex.unlock()
+
+    delayMS(10)
+
+  setModelData(data)
+    controlMutex.lock()
+    if data != tankbotModel
+      tankbotModel = data
+      state = WRITTING
+    controlMutex.unlock()
+
+  setActualData(data)
+    controlMutex.lock()
+    if data != tankbotActual
+      tankbotActual = data
+      state = WRITTING
+    controlMutex.unlock()
+
+
+
+tcp comms:
+  startedTransmission = false
+  receiveArmdData
+  sendArmData
+  state = IDLE : {IDLE, START, TRANSMITTING, DATA_RECEIVED}
+  mutex[] = {stateMutex, receiveDataMutex, sendDataMutex}
+
+  // function to signal transmission to start
+  startTransmission(armData)
+    stateMutex.lock()
+    if state == IDLE || DATA_RECEIVED
+      state = START
+    stateMutex.unlock()
+
+  // function to get the received data
+  getData()
+    stateMutex.lock()
+    state = IDLE
+    stateMutex.unlock()
+
+    receiveDataMutex.lock()
+    returnData = receivArmData
+    receiveData = NULL
+    receiveDataMutex.unlock()
+    return returnData
+
+  // function to retrieve if data is read to be read
+  receivedData
+    stateMutex.lock()
+    result = (state == DATA_RECEIVED)
+    stateMutex.unlock()
+    return result
+
+  tcp loop:
+    switch state
+      case START
+        stateMutex.lock()
+        state = TRANSMITTING
+        stateMutex.unlock()
+
+        transmit tcp arm data
+
+        receiveDataMutex.lock()
+        receiveArmData = received data
+        receiveDataMutex.unlock()
+
+        stateMutex.lock()
+        state = DATA_RECEIVED
+        stateMutex.unlock()
+
+main module:
+  main control init:
+    connect to server
+    get initial arm data
+
+    startScreen thread
+    startTCPThread
+    tcp.startTransmission(initArmData) // this will set up the SM below
+
+  main control loop:
+    for all keys
+      if pressed
+        inc/dec mapped joint
+        screen.setModelData(armData)
+    if tcp.receivedData()
+      clear screen
+      screen.setActualData(receivedData)
+      tcp.startTransmission(armData)
+
+
+
+
+If doing server side IK then we can have the following components, otherwise just put the functionality into the Arduino class
+Joint
+- angle
+- length
+- min angle
+- max angle
+- prev value
+
+Arm
+- list of joints
+- subscribes to Comms(ARM)
+
+Wheel
+- state {fwd, stop, rev}
+- speed
+
+Drive
+- list of wheels
+- subscribes to Comms(DRIVE)
